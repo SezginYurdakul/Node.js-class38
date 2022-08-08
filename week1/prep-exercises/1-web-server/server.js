@@ -1,12 +1,13 @@
 const http = require("http");
 const fs = require("fs");
+let path = require("path");
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
-  let path = "./";
+  path = __dirname;
   switch (req.url) {
     case "/index.js":
-      path += "index.js";
+      path += "/index.js";
       res.setHeader("Content-Type", "text/javascript");
       break;
     case "/style.css":
