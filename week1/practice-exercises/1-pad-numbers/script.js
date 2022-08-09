@@ -1,4 +1,3 @@
-import { padLeft } from "./padLeft.js";
 /**
  ** Exercise 1: Pad numbers
  *
@@ -15,10 +14,10 @@ import { padLeft } from "./padLeft.js";
  * Tips:
  *   where to use `exports` and where `require`?
  */
-
+const funct = require("./padLeft.js");
 let numbers = ["12", "846", "2", "1236"];
 
 numbers.forEach((element) => {
-  const result = padLeft(element, 6, "_");
+  const result = funct.padLeft(element, 6, "_");
   console.log(result);
 });
