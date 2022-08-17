@@ -1,24 +1,41 @@
 import express from "express";
 import fetch from "node-fetch";
-import keys from "../sources/keys.js";
+import keys from "./sources/keys.js";
+import temperatureConverter from "./tempConverter.js";
 const app = express();
-export const getWeather = async (req, res) => {
-  const { cityName } = req.body;
+app.use(express.json());
 
-  if (cityName) {
-    try {
-      const weatherDataResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${keys.API_KEY}`
-      );
-      const weatherData = await weatherDataResponse.json();
-      res.status(400);
-      res.send({ weatherMessage: "Please enter a valid city name." });
-    } catch (err) {
+export const getWeatherData = async (req, res) => {
+  const { API_KEY } = keys;
+  const { cityName } = req.body;
+  const URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&APPID=${API_KEY}`;
+
+  try {
+    if (!cityName) {
       res.status(404);
-      res.send({ errorMessage: "Please provide Valid City name" });
+      res.send({ errorMessage: "Please provide City name" });
+    } else {
+      const weatherResponse = await fetch(URL);
+      const weatherData = await weatherResponse.json();
+
+      if (weatherData.cod === "404") {
+        res.status(404);
+        res.send({
+          weatherAppMessage: `${weatherData.message.toUpperCase()}, Please check your City Name`,
+        });
+      } else {
+        res.status(200);
+        const tempKelvin = weatherData.main.temp;
+        const tempCelsius = temperatureConverter(tempKelvin);
+        res.send({
+          weatherMessage: `The temperature in ${weatherData.name} is ${tempCelsius} °C !`,
+        });
+      }
     }
-  } else {
-    res.status(404);
-    res.send({ errorMessage: "Oooops There is something Wrong, Please try again later !!" });
+  } catch (err) {
+    res.status(500);
+    res.send({
+      errorMessage: "There is something wrong, please try again later.",
+    });
   }
 };
