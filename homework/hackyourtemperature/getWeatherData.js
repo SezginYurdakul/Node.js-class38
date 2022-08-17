@@ -12,7 +12,7 @@ export const getWeatherData = async (req, res) => {
 
   try {
     if (!cityName) {
-      res.status(404);
+      res.status(400);
       res.send({ errorMessage: "Please provide City name" });
     } else {
       const weatherResponse = await fetch(URL);
